@@ -39,7 +39,7 @@ import org.apache.tika.metadata.Property.PropertyType;
 /**
  * A multi-valued metadata container.
  */
-public class Metadata implements CreativeCommons, Geographic, HttpHeaders,
+public class Metadata implements CreativeCommons, Geographic, HttpHeaders, DublinCore,
         Message, MSOffice, ClimateForcast, TIFF, TikaMetadataKeys, TikaMimeKeys,
         Serializable {
 
