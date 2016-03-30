@@ -18,15 +18,12 @@
 package org.apache.tika.parser.ttr;
 
 import org.apache.tika.metadata.Metadata;
-import org.apache.tika.sax.CleanPhoneText;
 import org.apache.tika.sax.ContentHandlerDecorator;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,103 +60,193 @@ public class MeasurementExtractingContentHandler extends ContentHandlerDecorator
     public void endDocument() throws SAXException {
         super.endDocument();
         //List<String> numbers = CleanPhoneText.extractPhoneNumbers(super.toString());
-        List<String> numbers = extractMeasurements(super.toString());
-        for (String number : numbers) {
-            metadata.add(MEASUREMENTS, number);
+        List<Measurement> numbers = extractMeasurements(super.toString());
+        for (Measurement number : numbers) {
+            metadata.add(MEASUREMENTS, number.toString());
         }
     }
 
-    public static final String
-            MEASURE = "(f(ee)?(oo)?t|in(ch)?(es)?|y(ar)?d(s)?|kg|g|ml|l|km|cm|m|meter(s)?|\"|\')",
-            MAYBE_MEASURE = MEASURE + "?",
-            NUMBER = "([0-9\\-/]+)",
-            X = "(x|by)",
-            SPACE = "\\s",
-            MAYBE_SPACE = "\\s?",
-            SPACE_OR_END = "(\\s|$)",
-            START = "^",
-            END = "$",
-            TAB = "\t";
-
-    public static final Pattern
-            regular = Pattern.compile(NUMBER + MAYBE_SPACE + MEASURE + SPACE_OR_END, Pattern.CASE_INSENSITIVE),
-            lengthXwidth = Pattern.compile(NUMBER + MAYBE_SPACE + MAYBE_MEASURE + MAYBE_SPACE + X + MAYBE_SPACE + NUMBER + MAYBE_MEASURE, Pattern.CASE_INSENSITIVE),
-            beforeX = Pattern.compile(NUMBER + MAYBE_SPACE + MAYBE_MEASURE + MAYBE_SPACE + END, Pattern.CASE_INSENSITIVE),
-            afterX = Pattern.compile(START + MAYBE_SPACE + NUMBER + MAYBE_SPACE + MAYBE_MEASURE, Pattern.CASE_INSENSITIVE),
-            measure = Pattern.compile(MAYBE_SPACE + MEASURE, Pattern.CASE_INSENSITIVE);
-
-
-    public static ArrayList<String> extractMeasurements(String text)
+    public static ArrayList<Measurement> extractMeasurements(String text)
     {
-        ArrayList<String> measurements = new ArrayList<String>();
-        //for (String text:inputText.split("\n"))
-       // {
-            String[] fields = {"","",""};
-            int match = 0;
-            Matcher lengthXwidthMatcher = lengthXwidth.matcher(text);
-            Matcher regularMatcher = regular.matcher(text);
+        ArrayList<Measurement> measurements = new ArrayList<>();
+        Matcher regularMatcher = regular.matcher(text);
+        Set<String> namedGroups = getNamedGroupCandidates(NUMBER + MAYBE_SPACE + MEASURE + SPACE_OR_END);
 
-            if (lengthXwidthMatcher.find())
-            {
-                String[] split = text.split(X);
-                for (int i = 0; i<split.length; i++)
-                {
-                    Matcher beforeXMatcher = beforeX.matcher(split[i]);
-                    Matcher afterXMatcher = afterX.matcher(split[i]);
-                    if (beforeXMatcher.find() && match==0)
-                    {
-                        fields[0] = beforeXMatcher.group();
-                        match++;
-                    }
-                    if (afterXMatcher.find())
-                    {
-                        if (match==1)
-                        {
-                            fields[1] = afterXMatcher.group();
-                            match++;
-                        }
-                        else if (match==2)
-                        {
-                            fields[2] = afterXMatcher.group();
-                            match++;
-                        }
-                    }
-                }
-                Matcher lengthHasMeasure = measure.matcher(fields[0]);
-                Matcher widthHasMeasure = measure.matcher(fields[1]);
-                Matcher heightHasMeasure = measure.matcher(fields[2]);
-                if (heightHasMeasure.find()==true)
-                {
-                    if (lengthHasMeasure.find()==false)
-                    {
-                        fields[0] = fields[0] + heightHasMeasure.group();
-                    }
-                    if (widthHasMeasure.find()==false)
-                    {
-                        fields[1] = fields[1] + heightHasMeasure.group();
-                    }
-                }
-                else if (widthHasMeasure.find()==true)
-                {
-                    if (lengthHasMeasure.find()==false)
-                    {
-                        fields[0] = fields[0] + widthHasMeasure.group();
-                    }
+        if (regularMatcher.find()) {
+            // Remove invalid groups
+            Iterator<String> i = namedGroups.iterator();
+            while (i.hasNext()) {
+                try {
+                    regularMatcher.group(i.next());
+                } catch (IllegalArgumentException e) {
+                    i.remove();
                 }
             }
-            else if(regularMatcher.find())
-            {
-                fields[0] = regularMatcher.group();
-                match++;
-                while (regularMatcher.find() && match<3)
-                {
-                    fields[match] = regularMatcher.group();
-                }
+            measurements.add(printMatches(regularMatcher, namedGroups));
+            while (regularMatcher.find()) {
+                measurements.add(printMatches(regularMatcher, namedGroups));
             }
-
-            measurements.add(" -- " + TAB + fields[0] + TAB + fields[1] + TAB + fields[2]);
-//}
+        }
         return measurements;
     }
+
+    private static Measurement printMatches(Matcher matcher, Set<String> namedGroups) {
+        Measurement m=new Measurement();
+        String[] measure= matcher.group().split(" ",2);
+        m.set_unit_value(measure[0]);
+        m.set_unit(measure[1]);
+        for (String name: namedGroups) {
+            String matchedString = matcher.group(name);
+            if (matchedString != null) {
+                measure=name.split("0");
+                m.set_category(measure[0]);
+                if(measure.length<2)
+                    m.set_sub_category(name);
+                else
+                    m.set_sub_category(measure[1]);
+            }
+        }
+        return m;
+    }
+
+    private static Set<String> getNamedGroupCandidates(String regex) {
+        Set<String> namedGroups = new TreeSet<String>();
+        Matcher m = Pattern.compile("\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>").matcher(regex);
+        while (m.find()) {
+            namedGroups.add(m.group(1));
+        }
+        return namedGroups;
+    }
+
+    public static final String
+            MEASURE = "(?<unit>(?:(?:atto|centi|deca|deci|exa|femto|giga|hecto|kilo|mega|micro|milli|nano|peta|pico|tera|yocto|yotta|zepto)" +
+            "?\\s*(?:(?:(?:(?<distance0metre>met)|(?<volume0litre>lit))(?:re|er))|(?<weight0gram>gram)|(?<energy>calorie|joule)(?<time0second>sec(?:ond)?))s?)|" +
+            "(?:(?<distance0feet>f(?:ee)?(?:oo)?t)|(?<distance0inch>in(?:ch)?(?:es)?)|(?<distance0yard>y(?:ar)?ds?)|(?<distance0mile>miles?)|" +
+            "(?<distance0inch01>\\\")|(?<distance0feet01>\\'))|(?<temperature>celsius|fahrenheit|kelvin)|(?<time0other>h(?:ou)r|day|min(?:ute)?|y(?:ea)r)s?|" +
+            "(?:(?<volume>gallon|pint|quart|cup)s?|(?<volume0spoon>tsp|tbsp|(?:table|tea)\\s*spoons?)|(?<volume0quart>qt)|(?<volume0cubic>cubic\\s*(?:(?:centi)?met(?:er|re)s?|" +
+            "f(?:ee)?(?:oo)?t|in(?:ch)?(?:es)?)))|(?:(?<weight>ounce|pound)s?|(?<weight0ounce>oz)|(?<weight0pound>lb)|(?<weight0ton>(?:metric|long|short)?\\s*ton(?:ne)s?))|" +
+            "(?:[acdefghkmtyz]?(?:(?<energy0calorie01>c)|(?<energy0joule01>j)|(?<distance0metre01>m)|(?<volume0litre01>l)|(?<weight0gram01>g)|(?<time0second01>sec))))",
+            /*
+            // the below is the expanded form of above regex for matching measurement units
+            // to convert the below to actual regex string you need to do 2 things
+            // 1. remove all the lines that start with '//' i.e regex version => '//.*'
+            // 2. replace '[\n\t\s]*' with empty string to get the final regex
+            // or simple way replace '//.*|[\t\n\s]' in below string with empty string
+            // use https://myregextester.com/index.php to dig deep
+
+            // for all the measurement units
+            (?<unit>
+                     (?:(?<distance0metre>met)|(?<volume0litre>lit))
+                     (?:re|er)
+
+                 )|
+                 (?<weight0gram>gram)|
+                 (?<energy>
+                     calorie|
+                     joule
+                 )
+                 (?<time0second>sec(?:ond)?)
+             )s?
+            )|
+
+
+            // other distance units like feet, inches, yards etc..
+            (?:
+             (?<distance0feet>f(?:ee)?(?:oo)?t)|
+             (?<distance0inch>in(?:ch)?(?:es)?)|
+             (?<distance0yard>y(?:ar)?ds?)|
+             (?<distance0mile>miles?)|
+             (?<distance0inch01>\")|
+             (?<distance0feet01>\')
+            )|
+
+
+            // temperature units
+            (?<temperature>
+             celsius|
+             fahrenheit|
+             kelvin
+            )|
+
+
+            // time units
+            (?<time0other>
+             h(?:ou)r|
+             day|
+             min(?:ute)?|
+             y(?:ea)r
+            )s?|
+
+
+            // volume units
+            (?:
+             (?<volume>
+                 gallon|
+                 pint|
+                 quart|
+                 cup
+             )s?|
+
+             (?<volume0spoon>
+                 tsp|
+                 tbsp|
+                 (?:table|tea)\s*spoons?
+             )|
+
+             (?<volume0quart>qt)|
+
+             // cubic versions
+             (?<volume0cubic>
+                 cubic
+                 \s*
+                 (?:
+                     (?:centi)?met(?:er|re)s?|
+                     f(?:ee)?(?:oo)?t|
+                     in(?:ch)?(?:es)?
+                 )
+             )
+            )|
+
+            // weight units
+            (?:
+             (?<weight>
+                 ounce|
+                 pound
+             )s?|
+
+             (?<weight0ounce>oz)|
+             (?<weight0pound>lb)|
+
+             // ton postfix versions
+             (?<weight0ton>
+                 (?:metric|long|short)?
+                 \s*
+                 ton(?:ne)s?
+             )
+            )|
+
+            // short form abrevations of all the above full units
+            // these should come at last so that dont match the single chars before the whole word matches
+            (?:
+             [acdefghkmtyz]?
+             (?:
+                 // c => calorie , j=> joule, m => metre, l=> litre, g=> gram
+                 (?<energy0calorie01>c)|
+                 (?<energy0joule01>j)|
+                 (?<distance0metre01>m)|
+                 (?<volume0litre01>l)|
+                 (?<weight0gram01>g)|
+                 (?<time0second01>sec)
+             )
+            )
+            )
+        */
+            NUMBER = "([\\d\\-\\./]+)",
+            MAYBE_SPACE = "\\s?",
+            SPACE_OR_END = "(\\W|$)";
+
+    public static final Pattern
+            regular = Pattern.compile(NUMBER + MAYBE_SPACE + MEASURE + SPACE_OR_END, Pattern.CASE_INSENSITIVE);
+
 
 }
