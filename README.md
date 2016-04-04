@@ -10,6 +10,7 @@ From the list of features mentioned here: http://wiki.apache.org/tika/ , the ffm
 <li>	<i>Tika_with_ffmpeg.json</i> -> the output after running tika with ffmpeg on the set of files which were audio and media type (a program was written for the purpose of segregating the files according to their mimetype after which the above java program is run).</li>
 <li>	<i>Tika_without_ffmpeg.json</i> -> the output after running tika without ffmpeg on the same set of files as above.</li>
 </ul>
+The diff-extraction.json shows the additional fields which were extracted for many of the files by enabling ffmpeg.
 <p>Exceptions and Warnings faced:
 Illegal IOException from org.apache.tika.parser.video.FLVParser,
 WARNING: PooledTimeSeries not installed! ( The pooled Time series video descriptor with tika was not used here , that is why).</p>
