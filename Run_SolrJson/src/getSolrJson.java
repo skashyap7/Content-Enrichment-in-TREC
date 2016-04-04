@@ -17,10 +17,10 @@ public class getSolrJson {
     public static void main(String args[]) throws Exception{
         ERROR_LOG.setLevel(Level.ALL);
         JSONParser parser=new JSONParser();
-        JSONArray final_json=new JSONArray();
         int count=0;
         for(File f : new File("TTR_DOI_OUTPUT").listFiles())
         {
+            JSONArray final_json=new JSONArray();
             try {
                 Object jObject = parser.parse(new FileReader(f));
                 JSONObject jsonObject = (JSONObject) jObject;
@@ -31,6 +31,7 @@ public class getSolrJson {
                     JSONObject jarr=(JSONObject) jsonObject.get(v);
                     file_json.put("content-type",jarr.get("content-type"));
                     file_json.put("short_url",jarr.get("short_url"));
+                    file_json.put("doi",jarr.get("doi"));
                     if(jarr.containsKey("measurements")) {
                         JSONArray measure=(JSONArray) jarr.get("measurements");
                         file_json.put("measurements",measure);
