@@ -27,13 +27,62 @@
   pointer-events: none;
 }
 
+#content {
+  width: 500px ;
+  float: left;
+}
+
+#menu {
+  width: 450px;
+  float: right;
+}
+
 </style>
 <body>
+<div  class="container">
+  <div  id="content">
+  </div>
+  <div id="menu">
+    <h4><u>Solr Index links</u></h4>
+    <TABLE  BORDER="3">
+          <TH>Category</TH>
+          <TH>Sub-category</TH>
+          <TR>
+            <TD><a href="http://localhost:8983/solr/measure/select?q=measurements%3A%22distance%22&fl=numFound&wt=json">distance</a></TD>
+            <TD>metre,feet,inch,yard,mile</TD>
+         </TR>
+         <TR>
+            <TD><a href="http://localhost:8983/solr/measure/select?q=measurements%3A%22time%22&fl=numFound&wt=json">time</a></TD>
+            <TD>second,other</TD>
+         </TR>
+         <TR>
+            <TD><a href="http://localhost:8983/solr/measure/select?q=measurements%3A%22energy%22&fl=numFound&wt=json">energy</a></TD>
+            <TD>calorie,joule</TD>
+         </TR>
+          <TR>
+            <TD><a href="http://localhost:8983/solr/measure/select?q=measurements%3A%22weight%22&fl=numFound&wt=json">weight</a></TD>
+            <TD>ounce,pound,ton,gram</TD>
+         </TR>
+          <TR>
+            <TD><a href="http://localhost:8983/solr/measure/select?q=measurements%3A%22volume%22&fl=numFound&wt=json">volume</a></TD>
+            <TD>gallon,pint,quart,cup,litre,spoon,cubic</TD>
+         </TR>
+          <TR>
+            <TD><a href="http://localhost:8983/solr/measure/select?q=measurements%3A%22temperature%22&fl=numFound&wt=json">temperature </a></TD>
+            <TD>kelvin,celsius,fahrenheit</TD>
+         </TR>
+         <TR>
+            <TD><a href="http://localhost:8983/solr/measure/select?q=measurements%3A%22unit%22&fl=numFound&wt=json">unit</a></TD>
+            <TD>unit</TD>
+         </TR>
+    <TABLE>
+  <div>
+</div>
 <script src="./d3.min.js"></script>
 <script>
 
 var margin = 20,
-    diameter = 960;
+    diameter = 800;
 
 var color = d3.scale.linear()
     .domain([-1, 5])
@@ -45,7 +94,7 @@ var pack = d3.layout.pack()
     .size([diameter - margin, diameter - margin])
     .value(function(d) { return d.size; })
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#content").append("svg")
     .attr("width", diameter)
     .attr("height", diameter)
   .append("g")
@@ -71,12 +120,12 @@ d3.json("measurements.json", function(error, root) {
       .attr("class", "label")
       .style("fill-opacity", function(d) { return d.parent === root ? 1 : 0; })
       .style("display", function(d) { return d.parent === root ? "inline" : "none"; })
-      .text(function(d) { return d.name; });
+      .html(function(d){
+        return d.name+","+d.value });
 
   var node = svg.selectAll("circle,text");
 
   d3.select("body")
-      .style("background", color(-1))
       .on("click", function() { zoom(root); });
 
   zoomTo([root.x, root.y, root.r * 2 + margin]);
@@ -102,9 +151,11 @@ d3.json("measurements.json", function(error, root) {
     var k = diameter / v[2]; view = v;
     node.attr("transform", function(d) { return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")"; });
     circle.attr("r", function(d) { return d.r * k; });
-  }
+  }  
+
 });
 
 d3.select(self.frameElement).style("height", diameter + "px");
-
 </script>
+</body>
+</html>

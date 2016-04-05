@@ -1,80 +1,143 @@
 {
- "name": "Measurements",
- "children": [
-  {
-   "name": "Temperature",
-   "children": [
-    {
-     "name": "Celsius",
-     "children": [
-      {"name": "AgglomerativeCluster", "size": 3938},
-      {"name": "CommunityStructure", "size": 3812},
-      {"name": "HierarchicalCluster", "size": 6714},
-      {"name": "MergeEdge", "size": 743}
-     ]
-    },
-    {
-     "name": "Fahrenheit",
-     "children": [
-      {"name": "BetweennessCentrality", "size": 3534},
-      {"name": "LinkDistance", "size": 5731},
-      {"name": "MaxFlowMinCut", "size": 7840},
-      {"name": "ShortestPaths", "size": 5914},
-      {"name": "SpanningTree", "size": 3416}
-     ]
-    },
-    {
-     "name": "Kelvin",
-     "children": [
-      {"name": "AspectRatioBanker", "size": 7074}
-     ]
-    }
-   ]
-  },
-  {
-   "name": "Time",
-   "children": [
-    {"name": "Second", "size": 17010},
-    {"name": "Other", "size": 5842}
-   ]
-  },
-  {
-   "name": "Energy",
-   "children": [
-    {"name": "Calorie", "size": 4294},
-    {"name": "Joule", "size": 1759}
-   ]
-  },
-  {
-   "name": "Distance",
-   "children": [
-    {"name": "Metre", "size": 8833},
-    {"name": "Inch", "size": 1732},
-    {"name": "Feet", "size": 3623},
-    {"name": "Yard", "size": 10066},
-	{"name": "Mile", "size": 1066}
-   ]
-  },
-  {
-   "name": "Weight",
-   "children": [
-    {"name": "Weight", "size": 1082},
-    {"name": "Ounce", "size": 1336},
-    {"name": "Pound", "size": 319},
-    {"name": "Ton", "size": 10498},
-	{"name": "Gram", "size": 10498}
-   ]
-  },
-  {
-   "name": "Volume",
-   "children": [
-    {"name": "Volume", "size": 1616},
-    {"name": "Litre", "size": 1027},
-    {"name": "Spoon", "size": 3891},
-    {"name": "Quart", "size": 891},
-    {"name": "Cubic", "size": 2893}
-   ]
-  },
-  {"name": "Unit", "size": 6082}
- ]
+    "children": [
+        {
+            "children": [
+                {
+                    "name": "Temperature", 
+                    "size": 5
+                }, 
+                {
+                    "name": "Unit", 
+                    "size": 5
+                } 
+            ], 
+            "name": "Others"
+        },
+        {
+            "children": [
+                {
+                    "name": "Time", 
+                    "size": 314
+                }, 
+                {
+                    "name": "Second", 
+                    "size": 6
+                }, 
+                {
+                    "name": "Other", 
+                    "size": 79
+                }
+            ], 
+            "name": "Time"
+        }, 
+        {
+            "children": [
+                {
+                    "name": "Energy", 
+                    "size": 1459
+                }, 
+                {
+                    "name": "Calorie", 
+                    "size": 64
+                }, 
+                {
+                    "name": "Joule", 
+                    "size": 11
+                }
+            ], 
+            "name": "Energy"
+        }, 
+        {
+            "children": [
+                {
+                    "name": "Distance", 
+                    "size": 2051
+                }, 
+                {
+                    "name": "Metre", 
+                    "size": 62
+                }, 
+                {
+                    "name": "Inch", 
+                    "size": 84
+                }, 
+                {
+                    "name": "Feet", 
+                    "size": 37
+                }, 
+                {
+                    "name": "Yard", 
+                    "size": 5
+                }, 
+                {
+                    "name": "Mile", 
+                    "size": 6
+                }
+            ], 
+            "name": "Distance"
+        }, 
+        {
+            "children": [
+                {
+                    "name": "Weight", 
+                    "size": 274
+                }, 
+                {
+                    "name": "Ounce", 
+                    "size": 5
+                }, 
+                {
+                    "name": "Pound", 
+                    "size": 5
+                }, 
+                {
+                    "name": "Ton", 
+                    "size": 5
+                }, 
+                {
+                    "name": "Gram", 
+                    "size": 10
+                }
+            ], 
+            "name": "Weight"
+        }, 
+        {
+            "children": [
+                {
+                    "name": "Volume", 
+                    "size": 454
+                }, 
+                {
+                    "name": "Gallon", 
+                    "size": 5
+                }, 
+                {
+                    "name": "Pint", 
+                    "size": 5
+                }, 
+                {
+                    "name": "Cup", 
+                    "size": 5
+                }, 
+                {
+                    "name": "Litre", 
+                    "size": 285
+                }, 
+                {
+                    "name": "Spoon", 
+                    "size": 5
+                }, 
+                {
+                    "name": "Quart", 
+                    "size": 5
+                }, 
+                {
+                    "name": "Cubic", 
+                    "size": 5
+                }
+            ], 
+            "name": "Volume"
+        }
+    ], 
+    "name": "Measurements"
 }
