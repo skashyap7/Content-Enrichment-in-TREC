@@ -22,7 +22,7 @@ The extracted metadata and other information extracted (by performing Task 3-8) 
 	curl 'http://localhost:8983/solr/update?commit=true' --data-binary @text_plain_output.json
 	-H 'Content-type:application/json' </li>
 <li>A solr schema has been developed each for Task 3&4, Task 6, Task 7,Task 8 with specific fields which have been identified - the ones extracted from tika,geoParser,metadata scoring technique like content-type, resourceName, etc… and few others which are the metadata which were adding as result of performing tasks 3-8 like location, author, affiliations, doi, score etc…</li></ol>
-A visualization of the schema and fields is in the file: visualizations/index_solr.html. The nesting shown for fields is just for visualization purpose only but in index they appear as arrays. We maintain seperate cores each for a task deliverable as mentioned above, hence if a query across cores need to be run, this visualization is important to form the queries.
+A visualization of the schema and fields is in the file: visualizations/index_solr.html. The nesting shown for fields is just for visualization purpose only but in index they appear as arrays. We maintain seperate cores each for a task deliverable as mentioned above, hence if a query across cores need to be run, this visualization is important to form such queries.
 
 <B>Task 3 - TTR+Measurements:</B>
 <ol type="a"><li>A tag ratio content handler was created to get the areas of text with important information. The tag ratio algorithm used here is based on the fact that the area of the document where more text is contained between an opening and closing tag has relevant information. We ignore the script, style, comment, head and link tags throughout in the document. </li>
