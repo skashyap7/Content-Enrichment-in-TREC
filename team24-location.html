@@ -18,11 +18,16 @@
   <body>
     <div id="header"></div>
     <div class="container row bfd" style="margin-top:60px; margin-left: 40px;">
-    <div class="container col-md-12">
+   <div class="container col-md-12">
       <a href="./team24-location.html" role="button" class="btn btn-primary disabled col-md-3" style="margin:10px;">Locations in TREC Dataset</a>
       <a href="./team24-mesaurements.html" role="button" class="btn btn-primary col-md-3" style="margin:10px;">Measurements in TREC Dataset</a>
       <a href="./team24-ontologies.html" role="button" class="btn btn-primary col-md-3" style="margin:10px;">Sweet Ontology Mappings in TREC</a>
       <a href="./Histogram/team24-histogram.html" role="button" class="btn btn-primary col-md-3" style="margin:10px;">Metadata Quality Score in TREC</a>
+      <a href="./team24-solr.html" role="button" class="btn btn-primary col-md-3" style="margin:10px;">Solr Schema </a>
+      <a href="./team24-cluster.html" role="button" class="btn btn-primary col-md-3" style="margin:10px;">Cluster Visualization </a>
+    </div>
+     <div>
+    <a href="http://localhost:8984/solr/Location/select?q=*%3A*&wt=json&indent=true">Solr Query Link for Seeing all Locations</a>
     </div>
     <p> Locations in TREC Polar Dataset</p>
     <div class="container" id="chart">
