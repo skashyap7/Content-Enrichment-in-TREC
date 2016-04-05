@@ -37,4 +37,4 @@ The Java program to run the above content handlers along with tika was written a
 Related files in the project folder:
 <ul><li><i>TTRContentHandler, MeasurementExtractingContentHandler, DOIGeneratorContentHandler</i> ->  Tika-master (tika-master\tika-parsers\src\main\java\org\apache\tika\parser\ttr)</li>
 <li><i>Run_ Tika, YourlsShortener</i>-> TTR_ DOI_Call\src </li></ul>
-Visualization: A measurement visualization has been created representing the category, sub cateogries of SI units along with the number of files the measurement types are present in.
+Visualization: A measurement visualization has been created representing the category, sub cateogries of SI units along with the number of files the measurement types are present in which is extracted from solr index using queries. For visualization purpose, the numFound values returned from Solr for the queries has been normalized by adding 5 to existing values.
