@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>D3 World Map</title>
+    <style>
+      path {
+        stroke: white;
+        stroke-width: 0.5px;
+      }
+    </style>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/topojson.v0.min.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var width = 900;
+      var height = 600;
+      function colors_google(n) {
+          var colors_g = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];
+          return colors_g[n % colors_g.length];
+          //return "#109618";
+      }
+      var places = [];
+      d3.json("data/locations/application_x-bibtex-text-file.json",function(data){
+        i = 0;
+        for(var key in data){
+          //console.log("Came here");
+          places.push(data[key]); 
+        }
+        //console.log(places);
+        show_graph(places);
+      });
+
+      
+      /*var places = [
+      {
+        name: "Wollongong, Australia",
+        location: {
+          latitude: -34.42507,
+          longitude: 150.89315
+        }
+      },
+      {
+        name: "Bangladesh",
+        location: {
+          latitude: 54.75844,
+          longitude: 90.0
+        }
+      }
+      ];*/
+      function show_graph(places){
+        var projection = d3.geo.mercator();
+      
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+        var path = d3.geo.path()
+            .projection(projection);
+        var g = svg.append("g");
+        
+        var tooltip = d3.select('body').append('div')
+        .style('position','absolute')
+        .style('padding','0 5px')
+        .style('background','white')
+        .style('opacity',0)
+
+        d3.json("world-110m2.json", function(error, topology) {
+            g.selectAll("path")
+              .data(topojson.object(topology, topology.objects.countries)
+                  .geometries)
+            .enter()
+              .append("path")
+              .attr("d", path)
+              .attr("fill",function(d,i){
+                return colors_google(i*2);
+              });
+        });
+        svg.selectAll(".pin")
+            .data(places)
+            .enter().append("circle", ".pin")
+            .attr("r", 2)
+            .attr("transform", function(d) {
+              return "translate(" + projection([
+                d.latitude,
+                d.longitude
+              ]) + ")";
+            })
+            .on('mouseover',function(d){
+              tooltip.transition()
+                .style('opacity',0.9)
+              tooltip.html(d.filename)
+                .style('left',d3.event.pageX +'px')
+                .style('top',d3.event.pageY+'px')
+                .attr("font-size","5px")
+              d3.select(this)
+                .style('opacity',0.5)
+                .attr('fill',"#3b3eac")
+            })
+            .on('mouseout',function(d){
+              d3.select(this)
+                .style('opacity',1)
+                .attr('fill',"#000000")
+            });
+        }
+    </script>
+    <div class="container">
+      <div class="container col-md-8">
+      </div>
+      <div class="container col-md-4">
+        <select id="fileselection">
+          <option value="All" selected="selected">Select MIME Type</option>
+          <option value="video_quicktime_H.json">video/quicktime</option>
+          <option value= "application_x-bittorrent_H.json">application/x-bittorrent</option>
+          <option value="application_gzip_H.json">application/gzip</option>
+          <option value="application_postscript_H.json">application/postscrcipt</option>
+          <option value="application_rtf_H.json">application/rtf</option>
+          <option value="application_vnd.google-earth.kml+xml_H.json">application/vnd.google-earth.kml+xml</option>
+          <option value="application_x-bibtex-text-file_H.json">application/x-bibtex-text-file</option>
+          <option value="application_x-bittorrent_H.json">application/x-bittorrent</option>
+          <option value="application_x-bzip2_H.json">application/x-bzip2</option>
+          <option value="application_x-font-ttf_H.json">application/x-font-ttf</option>
+          <option value="application_x-rpm_H.json">application/x-rpm</option>
+          <option value="application_x-sqlite3_H.json">application/x-sqlite3</option>
+          <option value="application_x-stuffit_H.json">application/x-stuffit</option>
+          <option value="application_zlib_H.json">application/zlib</option>
+          <option value="audio_mp4_H.json">audio/mp4</option>
+          <option value="audio_x-wav_H.json">audio/x-wav</option>
+          <option value="image_png_H.json">image/png</option>
+          <option value="image_vnd.microsoft.icon_H.json">image/vnd.microsoft.icon</option>
+          <option value="image_x-ms-bmp_H.json">image/x-ms-bmp</option>
+          <option value="message_rfc822_H.json">message/rfc822</option>
+          <option value="video_quicktime_H.json">video/quicktime</option>
+          <option value="video_x-flv_H.json">video/x-flv</option>
+        </select>
+      </div>
+    </div>
+  </body>
+</html>
