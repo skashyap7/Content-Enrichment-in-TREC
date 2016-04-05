@@ -1,4 +1,4 @@
-var radius = 960 / 2;
+var radius = 600 / 2;
 
 var cluster = d3.layout.cluster()
     .size([360, radius - 120]);

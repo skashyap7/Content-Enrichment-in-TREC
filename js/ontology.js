@@ -34,14 +34,8 @@ function display_data(piedata)
 
     var color = d3.scale.category10();
 
-    var info = d3.select('#analysis').append('div')
-                    .style('position','absolute')
-                    .style('padding','0 10px')
-                    .style('background','white')
-                    .style('color','black')
-                    .style('opacity',0)
 
-    var tooltip = d3.select('#chart').append('div')
+    var tooltip = d3.select('body').append('div')
     				.style('position','absolute')
     				.style('padding','0 10px')
     				.style('background','white')
@@ -60,25 +54,12 @@ function display_data(piedata)
 		.attr('fill',function(d,i){
 			return colors_google(i);	
 		})
-        .transition().delay(function(d, i) {
-         return 200; 
-        })
-        .attrTween('d', function(d) {
-           var i = d3.interpolate(d.startAngle+0.5, d.endAngle);
-           return function(t) {
-               d.endAngle = i(t);
-             return arc(d);
-           }
-        })
 		.on('mouseover',function(d){
 			tooltip.transition()
 				.style('opacity',0.9)
 			tooltip.html(d.data.name+','+d.data.value)
 				.style('left',d3.event.pageX +'px')
 				.style('top',d3.event.pageY+'px')
-            info.transition()
-                .style('opacity',0.9)
-            info.html("Total no of file with "+d.data.name+" Tag = "+d.data.value)
 			tempColor = this.style.fill;
 			d3.select(this)
 				.style('opacity',0.8)

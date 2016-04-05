@@ -23,8 +23,8 @@
       <a href="./team24-mesaurements.html" role="button" class="btn btn-primary col-md-3" style="margin:10px;">Measurements in TREC Dataset</a>
       <a href="./team24-ontologies.html" role="button" class="btn btn-primary col-md-3" style="margin:10px;">Sweet Ontology Mappings in TREC</a>
       <a href="./Histogram/team24-histogram.html" role="button" class="btn btn-primary col-md-3" style="margin:10px;">Metadata Quality Score in TREC</a>
-      <a href="./team24-solr.html" role="button" class="btn btn-primary col-md-3" style="margin:10px;">Solr Schema </a>
-      <a href="./team24-cluster.html" role="button" class="btn btn-primary col-md-3" style="margin:10px;">Cluster Visualization </a>
+     <a href="./team24-solr.html" role="button" class="btn btn-primary col-md-3" style="margin:10px;">Solr Schema </a>
+  <a href="./team24-ffmpeg.html" role="button" class="btn btn-primary col-md-3" style="margin:10px;">FFMPEG Extractions </a>
     </div>
      <div>
     <a href="http://localhost:8984/solr/Location/select?q=*%3A*&wt=json&indent=true">Solr Query Link for Seeing all Locations</a>
@@ -82,6 +82,9 @@
               .attr("d", path)
               .attr("fill",function(d,i){
                 return colors_google(i*2);
+              })
+              .append('text',function(d){
+                return d.name;
               });
         });
         svg.selectAll(".pin")
