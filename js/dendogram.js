@@ -12,7 +12,7 @@ var svg = d3.select("#dendogram").append("svg")
   .append("g")
     .attr("transform", "translate(" + radius + "," + radius + ")");
 
-d3.json("../data/solr.json", function(error, root) {
+d3.json("http://skashyap7.github.io/Content-Enrichment-in-TREC/data/solr.json", function(error, root) {
   if (error) throw error;
 
   var nodes = cluster.nodes(root);

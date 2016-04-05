@@ -44,7 +44,7 @@ function colors_google(n) {
   }
 // Use d3.text and d3.csv.parseRows so that we do not need to have a header
 // row, and can receive the csv as an array of arrays.
-d3.text("../../data/ontology/process_concepts_output.csv", function(text) {
+d3.text("http://skashyap7.github.io/Content-Enrichment-in-TREC/data/ontology/process_concepts_output.csv", function(text) {
   var csv = d3.csv.parseRows(text);
   var json = buildHierarchy(csv);
   createVisualization(json);
